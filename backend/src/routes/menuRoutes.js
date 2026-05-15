@@ -21,4 +21,60 @@ router.get("/", (req, res) => {
   });
 });
 
+// CREATE MENU
+router.post("/", (req, res) => {
+  const { name, price, image } =
+    req.body;
+
+  const sql = `
+    INSERT INTO menus
+    (name, price, image)
+    VALUES (?, ?, ?)
+  `;
+
+  db.query(
+    sql,
+    [name, price, image],
+    (err) => {
+      if (err) {
+        console.log(err);
+
+        return res.status(500).json({
+          message: "Create Menu Failed",
+        });
+      }
+
+      res.json({
+        message: "Menu Created",
+      });
+    }
+  );
+});
+
+// DELETE MENU
+router.delete("/:id", (req, res) => {
+  const sql = `
+    DELETE FROM menus
+    WHERE id = ?
+  `;
+
+  db.query(
+    sql,
+    [req.params.id],
+    (err) => {
+      if (err) {
+        console.log(err);
+
+        return res.status(500).json({
+          message: "Delete Failed",
+        });
+      }
+
+      res.json({
+        message: "Menu Deleted",
+      });
+    }
+  );
+});
+
 export default router;

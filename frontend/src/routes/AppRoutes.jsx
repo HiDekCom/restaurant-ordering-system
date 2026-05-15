@@ -4,8 +4,9 @@ import MenuPage from "../pages/customer/MenuPage";
 import CartPage from "../pages/customer/CartPage";
 import OrderStatusPage from "../pages/customer/OrderStatusPage";
 
-import DashboardPage from "../pages/admin/DashboardPage";
+// import DashboardPage from "../pages/admin/DashboardPage";
 import KitchenPage from "../pages/kitchen/KitchenPage";
+import AdminPage from "../pages/admin/AdminPage";
 
 export default function AppRoutes() {
   return (
@@ -27,7 +28,7 @@ export default function AppRoutes() {
 
         <Route
           path="/admin"
-          element={<DashboardPage />}
+          element={<AdminPage />}
         />
       </Routes>
     </BrowserRouter>
