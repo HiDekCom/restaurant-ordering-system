@@ -4,9 +4,8 @@ import MenuPage from "../pages/customer/MenuPage";
 import CartPage from "../pages/customer/CartPage";
 import OrderStatusPage from "../pages/customer/OrderStatusPage";
 
-import KitchenPage from "../pages/kitchen/KitchenPage";
-
 import DashboardPage from "../pages/admin/DashboardPage";
+import KitchenPage from "../pages/kitchen/KitchenPage";
 
 export default function AppRoutes() {
   return (

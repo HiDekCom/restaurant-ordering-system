@@ -1,5 +1,4 @@
 import express from "express";
-
 import db from "../config/db.js";
 
 const router = express.Router();
@@ -50,6 +49,58 @@ router.post("/", (req, res) => {
         message: "Order Created",
       });
     });
+  });
+});
+
+// GET ALL ORDERS
+router.get("/", (req, res) => {
+  const sql = `
+    SELECT * FROM orders
+    ORDER BY created_at DESC
+  `;
+
+  db.query(sql, async (err, orders) => {
+    if (err) {
+      console.log(err);
+
+      return res.status(500).json({
+        message: "Database Error",
+      });
+    }
+
+    // ดึง items ของแต่ละ order
+    const formattedOrders = await Promise.all(
+      orders.map(async (order) => {
+        return new Promise((resolve, reject) => {
+          const itemSql = `
+            SELECT
+              order_items.quantity,
+              menus.name
+            FROM order_items
+            JOIN menus
+            ON order_items.menu_id = menus.id
+            WHERE order_items.order_id = ?
+          `;
+
+          db.query(
+            itemSql,
+            [order.id],
+            (err, items) => {
+              if (err) {
+                reject(err);
+              }
+
+              resolve({
+                ...order,
+                items,
+              });
+            }
+          );
+        });
+      })
+    );
+
+    res.json(formattedOrders);
   });
 });
 
