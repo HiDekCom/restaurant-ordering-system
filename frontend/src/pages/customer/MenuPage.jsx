@@ -2,10 +2,27 @@ import Navbar from "../../components/customer/Navbar";
 import SearchBar from "../../components/customer/SearchBar";
 import CategoryFilter from "../../components/customer/CategoryFilter";
 import MenuCard from "../../components/customer/MenuCard";
-
-import menus from "../../data/menuData";
+import { useEffect, useState } from "react";
+import axios from "axios";
 
 export default function MenuPage() {
+    const [menus, setMenus] = useState([]);
+    useEffect(() => {
+        fetchMenus();
+        }, []);
+
+        const fetchMenus = async () => {
+        try {
+            const response = await axios.get(
+            "http://localhost:5000/api/menus"
+            );
+
+            setMenus(response.data);
+        } catch (error) {
+            console.log(error);
+        }
+    };
+
   return (
     <div className="min-h-screen bg-gray-100">
       <Navbar />

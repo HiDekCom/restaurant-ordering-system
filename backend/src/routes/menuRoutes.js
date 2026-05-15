@@ -1,3 +1,7 @@
+import express from "express";
+
+const router = express.Router();
+
 const menus = [
   {
     id: 1,
@@ -29,4 +33,8 @@ const menus = [
   },
 ];
 
-export default menus;
+router.get("/", (req, res) => {
+  res.json(menus);
+});
+
+export default router;
