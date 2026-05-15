@@ -1,40 +1,33 @@
-const menus = [
-  {
-    id: 1,
-    name: "Fried Rice",
-    price: 59,
-  },
-  {
-    id: 2,
-    name: "Pad Thai",
-    price: 79,
-  },
-];
+import Navbar from "../../components/customer/Navbar";
+import SearchBar from "../../components/customer/SearchBar";
+import CategoryFilter from "../../components/customer/CategoryFilter";
+import MenuCard from "../../components/customer/MenuCard";
+
+import menus from "../../data/menuData";
 
 export default function MenuPage() {
   return (
-    <div className="p-5">
-      <h1 className="text-3xl font-bold mb-5">
-        Restaurant Menu
-      </h1>
+    <div className="min-h-screen bg-gray-100">
+      <Navbar />
 
-      <div className="grid grid-cols-2 gap-4">
-        {menus.map((menu) => (
-          <div
-            key={menu.id}
-            className="border rounded-xl p-4 shadow"
-          >
-            <h2 className="text-xl font-semibold">
-              {menu.name}
-            </h2>
+      <div className="max-w-7xl mx-auto p-5">
+        {/* Search */}
+        <SearchBar />
 
-            <p>{menu.price} บาท</p>
+        {/* Category */}
+        <div className="mt-5">
+          <CategoryFilter />
+        </div>
 
-            <button className="bg-black text-white px-4 py-2 rounded mt-3">
-              Add to Cart
-            </button>
-          </div>
-        ))}
+        {/* Menu Grid */}
+        <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-6 mt-6">
+          {menus.map((menu) => (
+            <MenuCard
+              key={menu.id}
+              menu={menu}
+            />
+          ))}
+        </div>
       </div>
     </div>
   );

@@ -13,12 +13,23 @@ export default function AppRoutes() {
     <BrowserRouter>
       <Routes>
         <Route path="/" element={<MenuPage />} />
+
         <Route path="/cart" element={<CartPage />} />
-        <Route path="/status" element={<OrderStatusPage />} />
 
-        <Route path="/kitchen" element={<KitchenPage />} />
+        <Route
+          path="/status"
+          element={<OrderStatusPage />}
+        />
 
-        <Route path="/admin" element={<DashboardPage />} />
+        <Route
+          path="/kitchen"
+          element={<KitchenPage />}
+        />
+
+        <Route
+          path="/admin"
+          element={<DashboardPage />}
+        />
       </Routes>
     </BrowserRouter>
   );
