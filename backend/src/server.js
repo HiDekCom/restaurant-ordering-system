@@ -2,11 +2,11 @@ import express from "express";
 import cors from "cors";
 
 import { createServer } from "http";
-
 import { Server } from "socket.io";
 
 import menuRoutes from "./routes/menuRoutes.js";
 import orderRoutes from "./routes/orderRoutes.js";
+import path from "path";
 
 const app = express();
 
@@ -21,9 +21,14 @@ export const io = new Server(httpServer, {
 app.use(cors());
 
 app.use(express.json());
+app.use(
+  "/uploads",
+  express.static(
+    path.join(process.cwd(), "uploads")
+  )
+);
 
 app.use("/api/menus", menuRoutes);
-
 app.use("/api/orders", orderRoutes);
 
 io.on("connection", (socket) => {

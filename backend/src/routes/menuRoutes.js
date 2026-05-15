@@ -1,6 +1,6 @@
 import express from "express";
-
 import db from "../config/db.js";
+import upload from "../config/multer.js";
 
 const router = express.Router();
 
@@ -22,9 +22,11 @@ router.get("/", (req, res) => {
 });
 
 // CREATE MENU
-router.post("/", (req, res) => {
-  const { name, price, image } =
-    req.body;
+router.post("/", upload.single("image"), (req, res) => {
+  const { name, price } = req.body;
+
+    const image =
+      `http://localhost:5000/uploads/${req.file.filename}`;
 
   const sql = `
     INSERT INTO menus

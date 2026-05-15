@@ -9,7 +9,7 @@ export default function AdminPage() {
     useState({
       name: "",
       price: "",
-      image: "",
+      image: null,
     });
 
   useEffect(() => {
@@ -30,9 +30,14 @@ export default function AdminPage() {
 
   // INPUT CHANGE
   const handleChange = (e) => {
+    const { name, value, files } =
+        e.target;
+
     setFormData({
-      ...formData,
-      [e.target.name]: e.target.value,
+        ...formData,
+        [name]: files
+        ? files[0]
+        : value,
     });
   };
 
@@ -41,20 +46,38 @@ export default function AdminPage() {
     e.preventDefault();
 
     try {
-      await axios.post(
-        "http://localhost:5000/api/menus",
-        formData
-      );
+        const data = new FormData();
 
-      fetchMenus();
+        data.append(
+          "name",
+          formData.name
+        );
 
-      setFormData({
-        name: "",
-        price: "",
-        image: "",
-      });
+        data.append(
+          "price",
+          formData.price
+        );
+
+        data.append(
+          "image",
+          formData.image
+        );
+
+        await axios.post(
+          "http://localhost:5000/api/menus",
+          data
+        );
+
+        fetchMenus();
+
+        setFormData({
+          name: "",
+          price: "",
+          image: null,
+        });
+
     } catch (error) {
-      console.log(error);
+        console.log(error);
     }
   };
 
@@ -106,14 +129,22 @@ export default function AdminPage() {
           />
 
           <input
-            type="text"
+            type="file"
             name="image"
-            placeholder="Image URL"
-            value={formData.image}
             onChange={handleChange}
             className="border p-3 rounded-xl"
             required
-          />
+            />
+            
+            {formData.image && (
+              <img
+                src={URL.createObjectURL(
+                  formData.image
+                )}
+                alt="preview"
+                className="w-40 h-40 object-cover rounded-xl mt-4"
+              />
+            )}
 
         </div>
 
