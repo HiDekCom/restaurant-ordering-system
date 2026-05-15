@@ -21,6 +21,24 @@ export default function KitchenPage() {
     }
   };
 
+  const updateStatus = async (
+    id,
+    status
+  ) => {
+    try {
+      await axios.put(
+        `http://localhost:5000/api/orders/${id}`,
+        {
+            status,
+        }
+      );
+
+      fetchOrders();
+    } catch (error) {
+      console.log(error);
+    }
+  };
+
   return (
     <div className="min-h-screen bg-gray-100 p-5">
 
@@ -40,9 +58,25 @@ export default function KitchenPage() {
                 Order #{order.id}
               </h2>
 
-              <span className="text-gray-500 text-sm">
-                ฿{order.total_price}
-              </span>
+              <div className="text-right">
+                <p className="font-bold text-green-600">
+                    ฿{order.total_price}
+                </p>
+                <span
+                    className={`
+                    text-xs px-3 py-1 rounded-full text-white
+                    ${
+                        order.status === "Pending"
+                        ? "bg-yellow-500"
+                        : order.status === "Cooking"
+                        ? "bg-orange-500"
+                        : "bg-green-500"
+                    }
+                    `}
+                >
+                    {order.status}
+                </span>
+                </div>
             </div>
 
             <div className="space-y-2">
@@ -58,9 +92,24 @@ export default function KitchenPage() {
               ))}
             </div>
 
-            <button className="w-full mt-5 bg-green-500 text-white py-2 rounded-xl hover:bg-green-600">
-              Complete
-            </button>
+            <div className="flex gap-2 mt-5">
+                <button
+                    onClick={() =>
+                    updateStatus(order.id, "Cooking")
+                    }
+                    className="flex-1 bg-orange-500 text-white py-2 rounded-xl hover:bg-orange-600"
+                >
+                    Cooking
+                </button>
+                <button
+                    onClick={() =>
+                    updateStatus(order.id, "Completed")
+                    }
+                    className="flex-1 bg-green-500 text-white py-2 rounded-xl hover:bg-green-600"
+                >
+                    Completed
+                </button>
+                </div>
           </div>
         ))}
 

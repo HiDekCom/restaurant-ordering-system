@@ -104,4 +104,33 @@ router.get("/", (req, res) => {
   });
 });
 
+// UPDATE ORDER STATUS
+router.put("/:id", (req, res) => {
+  const { status } = req.body;
+
+  const sql = `
+    UPDATE orders
+    SET status = ?
+    WHERE id = ?
+  `;
+
+  db.query(
+    sql,
+    [status, req.params.id],
+    (err) => {
+      if (err) {
+        console.log(err);
+
+        return res.status(500).json({
+          message: "Update Failed",
+        });
+      }
+
+      res.json({
+        message: "Status Updated",
+      });
+    }
+  );
+});
+
 export default router;
