@@ -1,6 +1,12 @@
+import { useContext } from "react";
+
+import { CartContext } from "../../context/CartContext";
+
 export default function MenuCard({ menu }) {
+  const { addToCart } = useContext(CartContext);
+
   return (
-    <div className="bg-white rounded-2xl shadow-md overflow-hidden">
+    <div className="bg-white rounded-2xl shadow-md overflow-hidden hover:shadow-xl transition">
       
       {/* รูปอาหาร */}
       <div className="w-full h-40 overflow-hidden">
@@ -26,7 +32,10 @@ export default function MenuCard({ menu }) {
             ฿{menu.price}
           </p>
 
-          <button className="bg-black text-white px-4 py-2 rounded-xl hover:bg-gray-800 transition">
+          <button
+            onClick={() => addToCart(menu)}
+            className="bg-black text-white px-4 py-2 rounded-xl hover:bg-gray-800 transition"
+          >
             Add
           </button>
         </div>

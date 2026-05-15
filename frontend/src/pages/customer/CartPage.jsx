@@ -1,64 +1,52 @@
-import { useNavigate } from "react-router-dom";
+import { useContext } from "react";
+
+import { CartContext } from "../../context/CartContext";
 
 export default function CartPage() {
-  const navigate = useNavigate();
+  const { cartItems } = useContext(CartContext);
 
-  const cartItems = [
-    {
-      id: 1,
-      name: "Fried Rice",
-      qty: 2,
-      price: 59,
-    },
-    {
-      id: 2,
-      name: "Pad Thai",
-      qty: 1,
-      price: 79,
-    },
-  ];
-
-  const total = cartItems.reduce(
-    (sum, item) => sum + item.qty * item.price,
+  const totalPrice = cartItems.reduce(
+    (sum, item) =>
+      sum + item.price * item.qty,
     0
   );
 
   return (
     <div className="min-h-screen bg-gray-100 p-5">
       <h1 className="text-3xl font-bold mb-6">
-        Cart
+        Your Cart
       </h1>
 
       <div className="space-y-4">
         {cartItems.map((item) => (
           <div
             key={item.id}
-            className="bg-white p-4 rounded-xl shadow flex justify-between"
+            className="bg-white p-4 rounded-2xl shadow flex justify-between items-center"
           >
             <div>
-              <h2 className="font-semibold text-lg">
+              <h2 className="font-bold text-lg">
                 {item.name}
               </h2>
 
-              <p>Quantity: {item.qty}</p>
+              <p className="text-gray-500">
+                Quantity: {item.qty}
+              </p>
             </div>
 
-            <p className="font-bold">
-              {item.qty * item.price} บาท
+            <p className="text-xl font-bold text-green-600">
+              ฿{item.price * item.qty}
             </p>
           </div>
         ))}
       </div>
 
-      <div className="bg-white p-5 rounded-xl shadow mt-6">
+      {/* Total */}
+      <div className="bg-white p-5 rounded-2xl shadow mt-6">
         <h2 className="text-2xl font-bold">
-          Total: {total} บาท
+          Total: ฿{totalPrice}
         </h2>
 
-        <button
-          onClick={() => navigate("/status")}
-          className="w-full bg-green-500 text-white py-3 rounded-xl mt-5"
-        >
+        <button className="w-full bg-green-500 text-white py-3 rounded-xl mt-5 hover:bg-green-600 transition">
           Confirm Order
         </button>
       </div>
