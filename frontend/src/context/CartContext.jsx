@@ -35,11 +35,51 @@ export default function CartProvider({ children }) {
     });
   };
 
+  // ลบสินค้า
+  const removeFromCart = (id) => {
+    setCartItems((prev) =>
+      prev.filter((item) => item.id !== id)
+    );
+  };
+
+  // เพิ่มจำนวนสินค้า
+  const increaseQty = (id) => {
+    setCartItems((prev) =>
+      prev.map((item) =>
+        item.id === id
+          ? {
+              ...item,
+              qty: item.qty + 1,
+            }
+          : item
+      )
+    );
+  };
+
+  // ลดจำนวนสินค้า
+  const decreaseQty = (id) => {
+    setCartItems((prev) =>
+      prev
+        .map((item) =>
+          item.id === id
+            ? {
+                ...item,
+                qty: item.qty - 1,
+              }
+            : item
+        )
+        .filter((item) => item.qty > 0)
+    );
+  };
+
   return (
     <CartContext.Provider
       value={{
         cartItems,
         addToCart,
+        removeFromCart,
+        increaseQty,
+        decreaseQty,
       }}
     >
       {children}
