@@ -1,6 +1,7 @@
 import { useContext } from "react";
-
 import { CartContext } from "../../context/CartContext";
+
+import axios from "axios";
 
 export default function CartPage() {
   const {
@@ -16,14 +17,42 @@ export default function CartPage() {
       sum + item.price * item.qty,
     0
   );
+  const totalItems = cartItems.reduce(
+    (sum, item) => sum + item.qty,
+    0
+  );
+  const handleConfirmOrder = async () => {
+    try {
+        await axios.post(
+        "http://localhost:5000/api/orders",
+        {
+            cartItems,
+            totalPrice,
+        }
+        );
+
+        alert("Order Success!");
+    } catch (error) {
+        console.log(error);
+
+        alert("Order Failed");
+    }
+  };
 
   return (
     <div className="min-h-screen bg-gray-100 p-5">
-      
-      {/* Title */}
-      <h1 className="text-3xl font-bold mb-6">
-        Your Cart
-      </h1>
+        {/* Title */}
+        <div className="flex justify-between items-center mb-6">
+        
+            <h1 className="text-3xl font-bold">
+                Your Cart
+            </h1>
+
+            <span className="bg-black text-white px-4 py-2 rounded-full text-sm">
+                {totalItems} Items
+            </span>
+
+        </div>
 
       {/* Empty Cart */}
       {cartItems.length === 0 && (
@@ -107,9 +136,12 @@ export default function CartPage() {
             Total: ฿{totalPrice}
           </h2>
 
-          <button className="w-full bg-green-500 text-white py-3 rounded-xl mt-5 hover:bg-green-600 transition">
+          <button
+            onClick={handleConfirmOrder}
+            className="w-full bg-green-500 text-white py-3 rounded-xl mt-5 hover:bg-green-600 transition"
+            >
             Confirm Order
-          </button>
+            </button>
         </div>
       )}
     </div>
