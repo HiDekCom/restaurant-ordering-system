@@ -1,13 +1,31 @@
 import { useEffect, useState } from "react";
 
 import axios from "axios";
+import { io } from "socket.io-client";
+
+const socket = io(
+  "http://localhost:5000"
+);
 
 export default function KitchenPage() {
   const [orders, setOrders] = useState([]);
 
-  useEffect(() => {
+useEffect(() => {
+  fetchOrders();
+
+  socket.on("newOrder", () => {
     fetchOrders();
-  }, []);
+  });
+
+  socket.on("orderUpdated", () => {
+    fetchOrders();
+  });
+
+  return () => {
+    socket.off("newOrder");
+    socket.off("orderUpdated");
+  };
+}, []);
 
   const fetchOrders = async () => {
     try {

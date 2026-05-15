@@ -1,5 +1,6 @@
 import express from "express";
 import db from "../config/db.js";
+import { io } from "../server.js";
 
 const router = express.Router();
 
@@ -44,6 +45,8 @@ router.post("/", (req, res) => {
           message: "Order Item Error",
         });
       }
+
+      io.emit("newOrder");
 
       res.json({
         message: "Order Created",
@@ -125,6 +128,8 @@ router.put("/:id", (req, res) => {
           message: "Update Failed",
         });
       }
+
+      io.emit("orderUpdated");
 
       res.json({
         message: "Status Updated",
