@@ -2,7 +2,8 @@ import { useEffect, useState } from "react";
 import axios from "axios";
 
 // 🔥 API URL (ต้องมาจาก .env)
-const API_URL = import.meta.env.VITE_API_URL;
+// const API_URL = import.meta.env.VITE_API_URL;
+import API_URL from "../../api/api";
 
 export default function AdminPage() {
   const [menus, setMenus] = useState([]);
