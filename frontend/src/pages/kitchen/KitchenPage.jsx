@@ -2,10 +2,9 @@ import { useEffect, useState } from "react";
 
 import axios from "axios";
 import { io } from "socket.io-client";
+import API_URL from "../../api/api";
 
-const socket = io(
-  "https://restaurant-backend-c9qm.onrender.com"
-);
+const socket = io(API_URL);
 
 export default function KitchenPage() {
   const [orders, setOrders] = useState([]);
@@ -45,7 +44,7 @@ useEffect(() => {
   ) => {
     try {
       await axios.put(
-        `https://restaurant-backend-c9qm.onrender.com/api/orders/${id}`,
+        `${API_URL}/api/orders/${id}`,
         {
             status,
         }
