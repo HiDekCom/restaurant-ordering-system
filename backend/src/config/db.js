@@ -1,32 +1,17 @@
-import mysql from "mysql2";
-
+import pkg from "pg";
 import dotenv from "dotenv";
 
 dotenv.config();
 
-const db = mysql.createConnection({
-  host: process.env.DB_HOST,
+const { Pool } = pkg;
 
-  user: process.env.DB_USER,
-
-  password: process.env.DB_PASSWORD,
-
-  database: process.env.DB_NAME,
-
-  port: process.env.DB_PORT,
+const db = new Pool({
+  connectionString: process.env.DATABASE_URL,
+  ssl: { rejectUnauthorized: false },
 });
 
-db.connect((err) => {
-  if (err) {
-    console.log(
-      "Database Connection Failed",
-      err
-    );
-  } else {
-    console.log(
-      "Database Connected"
-    );
-  }
-});
+db.connect()
+  .then(() => console.log("Database Connected"))
+  .catch((err) => console.log("Database Connection Failed", err));
 
 export default db;

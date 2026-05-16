@@ -4,149 +4,76 @@ import { io } from "../server.js";
 
 const router = express.Router();
 
-
-// =========================
 // CREATE ORDER
-// =========================
-router.post("/", (req, res) => {
-  const { cartItems, totalPrice } = req.body;
+router.post("/", async (req, res) => {
+  try {
+    const { cartItems, totalPrice } = req.body;
 
-  const orderSql =
-    "INSERT INTO orders (total_price) VALUES (?)";
+    const orderResult = await db.query(
+      "INSERT INTO orders (total_price) VALUES ($1) RETURNING id",
+      [totalPrice]
+    );
 
-  db.query(orderSql, [totalPrice], (err, orderResult) => {
-    if (err) {
-      console.log(err);
-      return res.status(500).json({
-        message: "Order Error",
-      });
+    const orderId = orderResult.rows[0].id;
+
+    for (const item of cartItems) {
+      await db.query(
+        "INSERT INTO order_items (order_id, menu_id, quantity, price) VALUES ($1, $2, $3, $4)",
+        [orderId, item.id, item.qty, item.price]
+      );
     }
 
-    const orderId = orderResult.insertId;
-
-    const orderItems = cartItems.map((item) => [
-      orderId,
-      item.id,
-      item.qty,
-      item.price,
-    ]);
-
-    const itemSql = `
-      INSERT INTO order_items
-      (order_id, menu_id, quantity, price)
-      VALUES ?
-    `;
-
-    db.query(itemSql, [orderItems], (err) => {
-      if (err) {
-        console.log(err);
-        return res.status(500).json({
-          message: "Order Item Error",
-        });
-      }
-
-      // 🔥 FIX: ส่งข้อมูลไป frontend จริง
-      io.emit("newOrder", {
-        orderId,
-        totalPrice,
-      });
-
-      res.json({
-        message: "Order Created",
-        orderId,
-      });
-    });
-  });
+    io.emit("newOrder", { orderId, totalPrice });
+    res.json({ message: "Order Created", orderId });
+  } catch (err) {
+    console.log(err);
+    res.status(500).json({ message: "Order Error" });
+  }
 });
 
-
-// =========================
 // GET ALL ORDERS
-// =========================
-router.get("/", (req, res) => {
-  const sql = `
-    SELECT * FROM orders
-    ORDER BY created_at DESC
-  `;
+router.get("/", async (req, res) => {
+  try {
+    const orders = await db.query(
+      "SELECT * FROM orders ORDER BY created_at DESC"
+    );
 
-  db.query(sql, (err, orders) => {
-    if (err) {
-      console.log(err);
-      return res.status(500).json({
-        message: "Database Error",
-      });
-    }
-
-    const formattedOrders = Promise.all(
-      orders.map((order) => {
-        return new Promise((resolve, reject) => {
-          const itemSql = `
-            SELECT
-              order_items.quantity,
-              menus.name
-            FROM order_items
-            JOIN menus ON order_items.menu_id = menus.id
-            WHERE order_items.order_id = ?
-          `;
-
-          db.query(itemSql, [order.id], (err, items) => {
-            if (err) return reject(err);
-
-            resolve({
-              ...order,
-              items: items || [],
-            });
-          });
-        });
+    const formattedOrders = await Promise.all(
+      orders.rows.map(async (order) => {
+        const items = await db.query(
+          `SELECT order_items.quantity, menus.name
+           FROM order_items
+           JOIN menus ON order_items.menu_id = menus.id
+           WHERE order_items.order_id = $1`,
+          [order.id]
+        );
+        return { ...order, items: items.rows || [] };
       })
     );
 
-    formattedOrders
-      .then((result) => {
-        res.json(result);
-      })
-      .catch((err) => {
-        console.log(err);
-        res.status(500).json({
-          message: "Format Error",
-        });
-      });
-  });
+    res.json(formattedOrders);
+  } catch (err) {
+    console.log(err);
+    res.status(500).json({ message: "Database Error" });
+  }
 });
 
-
-// =========================
 // UPDATE ORDER STATUS
-// =========================
-router.put("/:id", (req, res) => {
-  const { status } = req.body;
+router.put("/:id", async (req, res) => {
+  try {
+    const { status } = req.body;
 
-  const sql = `
-    UPDATE orders
-    SET status = ?
-    WHERE id = ?
-  `;
+    await db.query(
+      "UPDATE orders SET status = $1 WHERE id = $2",
+      [status, req.params.id]
+    );
 
-  db.query(sql, [status, req.params.id], (err) => {
-    if (err) {
-      console.log(err);
-      return res.status(500).json({
-        message: "Update Failed",
-      });
-    }
-
-    // 🔥 FIX: ส่ง event พร้อมข้อมูล
-    io.emit("orderUpdated", {
-      orderId: req.params.id,
-      status,
-    });
-
-    res.json({
-      message: "Status Updated",
-      orderId: req.params.id,
-      status,
-    });
-  });
+    io.emit("orderUpdated", { orderId: req.params.id, status });
+    res.json({ message: "Status Updated" });
+  } catch (err) {
+    console.log(err);
+    res.status(500).json({ message: "Update Failed" });
+  }
 });
 
 export default router;
