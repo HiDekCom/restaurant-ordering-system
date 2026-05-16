@@ -24,7 +24,7 @@ export default function CartPage() {
   const handleConfirmOrder = async () => {
     try {
         await axios.post(
-        "https://restaurant-backend.onrender.com/api/orders",
+        "https://restaurant-backend-c9qm.onrender.com/api/orders",
         {
             cartItems,
             totalPrice,

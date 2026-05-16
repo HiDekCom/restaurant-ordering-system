@@ -4,7 +4,7 @@ import axios from "axios";
 import { io } from "socket.io-client";
 
 const socket = io(
-  "https://restaurant-backend.onrender.com"
+  "https://restaurant-backend-c9qm.onrender.com"
 );
 
 export default function KitchenPage() {
@@ -30,7 +30,7 @@ useEffect(() => {
   const fetchOrders = async () => {
     try {
       const response = await axios.get(
-        "https://restaurant-backend.onrender.com/api/orders"
+        "https://restaurant-backend-c9qm.onrender.com/api/orders"
       );
 
       setOrders(response.data);
@@ -45,7 +45,7 @@ useEffect(() => {
   ) => {
     try {
       await axios.put(
-        `https://restaurant-backend.onrender.com/api/orders/${id}`,
+        `https://restaurant-backend-c9qm.onrender.com/api/orders/${id}`,
         {
             status,
         }

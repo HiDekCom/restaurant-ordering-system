@@ -26,7 +26,7 @@ router.post("/", upload.single("image"), (req, res) => {
   const { name, price } = req.body;
 
     const image =
-      `https://restaurant-backend.onrender.com/uploads/${req.file.filename}`;
+      `https://restaurant-backend-c9qm.onrender.com/uploads/${req.file.filename}`;
 
   const sql = `
     INSERT INTO menus

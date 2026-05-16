@@ -25,7 +25,7 @@ export default function LoginPage() {
 
     try {
       const response = await axios.post(
-        "https://restaurant-backend.onrender.com/api/auth/login",
+        "https://restaurant-backend-c9qm.onrender.com/api/auth/login",
         formData
       );
 
