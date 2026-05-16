@@ -29,7 +29,7 @@ useEffect(() => {
   const fetchOrders = async () => {
     try {
       const response = await axios.get(
-        "https://restaurant-backend-c9qm.onrender.com/api/orders"
+        `${API_URL}/api/orders`
       );
 
       setOrders(response.data);
