@@ -19,7 +19,7 @@ export default function AdminPage() {
   const fetchMenus = async () => {
     try {
       const response = await axios.get(
-        "${API_URL}/api/menus"
+        '${API_URL}/api/menus'
       );
 
       setMenus(response.data);
@@ -64,7 +64,7 @@ export default function AdminPage() {
         );
 
         await axios.post(
-          "${API_URL}/api/menus",
+          '${API_URL}/api/menus',
           data
         );
 

@@ -2,32 +2,38 @@ import Navbar from "../../components/customer/Navbar";
 import SearchBar from "../../components/customer/SearchBar";
 import CategoryFilter from "../../components/customer/CategoryFilter";
 import MenuCard from "../../components/customer/MenuCard";
+
 import { useEffect, useState } from "react";
+
 import axios from "axios";
 
+import API_URL from "../../api/api";
+
 export default function MenuPage() {
-    const [menus, setMenus] = useState([]);
-    useEffect(() => {
-        fetchMenus();
-        }, []);
+  const [menus, setMenus] = useState([]);
 
-        const fetchMenus = async () => {
-        try {
-            const response = await axios.get(
-            "${API_URL}/api/menus"
-            );
+  useEffect(() => {
+    fetchMenus();
+  }, []);
 
-            setMenus(response.data);
-        } catch (error) {
-            console.log(error);
-        }
-    };
+  const fetchMenus = async () => {
+    try {
+      const response = await axios.get(
+        `${API_URL}/api/menus`
+      );
+
+      setMenus(response.data);
+    } catch (error) {
+      console.log(error);
+    }
+  };
 
   return (
     <div className="min-h-screen bg-gray-100">
       <Navbar />
 
       <div className="max-w-7xl mx-auto p-5">
+        
         {/* Search */}
         <SearchBar />
 
