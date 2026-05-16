@@ -7,7 +7,7 @@ import { useEffect, useState } from "react";
 
 import axios from "axios";
 
-import API_URL from "../../api/api";
+import { API_URL } from "../../api/api";
 
 export default function MenuPage() {
   const [menus, setMenus] = useState([]);
