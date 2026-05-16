@@ -14,7 +14,7 @@ export default function MenuPage() {
         const fetchMenus = async () => {
         try {
             const response = await axios.get(
-            "http://localhost:5000/api/menus"
+            "${API_URL}/api/menus"
             );
 
             setMenus(response.data);

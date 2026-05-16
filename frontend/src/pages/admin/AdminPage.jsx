@@ -19,7 +19,7 @@ export default function AdminPage() {
   const fetchMenus = async () => {
     try {
       const response = await axios.get(
-        "http://localhost:5000/api/menus"
+        "${API_URL}/api/menus"
       );
 
       setMenus(response.data);
@@ -64,7 +64,7 @@ export default function AdminPage() {
         );
 
         await axios.post(
-          "http://localhost:5000/api/menus",
+          "${API_URL}/api/menus",
           data
         );
 
@@ -85,7 +85,7 @@ export default function AdminPage() {
   const deleteMenu = async (id) => {
     try {
       await axios.delete(
-        `http://localhost:5000/api/menus/${id}`
+        `${API_URL}/api/menus/${id}`
       );
 
       fetchMenus();
