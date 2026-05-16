@@ -1,43 +1,42 @@
 import { useEffect, useState } from "react";
-
 import axios from "axios";
+
+// 🔥 API URL (ต้องมาจาก .env)
+const API_URL = import.meta.env.VITE_API_URL;
 
 export default function AdminPage() {
   const [menus, setMenus] = useState([]);
 
-  const [formData, setFormData] =
-    useState({
-      name: "",
-      price: "",
-      image: null,
-    });
+  const [formData, setFormData] = useState({
+    name: "",
+    price: "",
+    image: null,
+  });
 
   useEffect(() => {
     fetchMenus();
   }, []);
 
+  // GET MENUS
   const fetchMenus = async () => {
     try {
       const response = await axios.get(
-        '${API_URL}/api/menus'
+        `${API_URL}/api/menus`
       );
 
       setMenus(response.data);
     } catch (error) {
-      console.log(error);
+      console.log("Fetch error:", error);
     }
   };
 
   // INPUT CHANGE
   const handleChange = (e) => {
-    const { name, value, files } =
-        e.target;
+    const { name, value, files } = e.target;
 
     setFormData({
-        ...formData,
-        [name]: files
-        ? files[0]
-        : value,
+      ...formData,
+      [name]: files ? files[0] : value,
     });
   };
 
@@ -46,38 +45,26 @@ export default function AdminPage() {
     e.preventDefault();
 
     try {
-        const data = new FormData();
+      const data = new FormData();
 
-        data.append(
-          "name",
-          formData.name
-        );
+      data.append("name", formData.name);
+      data.append("price", formData.price);
+      data.append("image", formData.image);
 
-        data.append(
-          "price",
-          formData.price
-        );
+      await axios.post(
+        `${API_URL}/api/menus`,
+        data
+      );
 
-        data.append(
-          "image",
-          formData.image
-        );
+      fetchMenus();
 
-        await axios.post(
-          '${API_URL}/api/menus',
-          data
-        );
-
-        fetchMenus();
-
-        setFormData({
-          name: "",
-          price: "",
-          image: null,
-        });
-
+      setFormData({
+        name: "",
+        price: "",
+        image: null,
+      });
     } catch (error) {
-        console.log(error);
+      console.log("Create error:", error);
     }
   };
 
@@ -90,7 +77,7 @@ export default function AdminPage() {
 
       fetchMenus();
     } catch (error) {
-      console.log(error);
+      console.log("Delete error:", error);
     }
   };
 
@@ -134,19 +121,18 @@ export default function AdminPage() {
             onChange={handleChange}
             className="border p-3 rounded-xl"
             required
-            />
-            
-            {formData.image && (
-              <img
-                src={URL.createObjectURL(
-                  formData.image
-                )}
-                alt="preview"
-                className="w-40 h-40 object-cover rounded-xl mt-4"
-              />
-            )}
+          />
 
         </div>
+
+        {/* Preview image */}
+        {formData.image && (
+          <img
+            src={URL.createObjectURL(formData.image)}
+            alt="preview"
+            className="w-40 h-40 object-cover rounded-xl mt-4"
+          />
+        )}
 
         <button className="mt-4 bg-black text-white px-5 py-3 rounded-xl">
           Add Menu
@@ -155,7 +141,6 @@ export default function AdminPage() {
 
       {/* MENU LIST */}
       <div className="grid md:grid-cols-3 gap-5">
-
         {menus.map((menu) => (
           <div
             key={menu.id}
@@ -168,7 +153,6 @@ export default function AdminPage() {
             />
 
             <div className="p-4">
-
               <h2 className="font-bold text-xl">
                 {menu.name}
               </h2>
@@ -178,18 +162,14 @@ export default function AdminPage() {
               </p>
 
               <button
-                onClick={() =>
-                  deleteMenu(menu.id)
-                }
+                onClick={() => deleteMenu(menu.id)}
                 className="mt-4 bg-red-500 text-white px-4 py-2 rounded-xl hover:bg-red-600"
               >
                 Delete
               </button>
-
             </div>
           </div>
         ))}
-
       </div>
     </div>
   );

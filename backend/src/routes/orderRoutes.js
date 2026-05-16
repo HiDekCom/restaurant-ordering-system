@@ -4,18 +4,19 @@ import { io } from "../server.js";
 
 const router = express.Router();
 
+
+// =========================
 // CREATE ORDER
+// =========================
 router.post("/", (req, res) => {
   const { cartItems, totalPrice } = req.body;
 
-  // บันทึก orders
   const orderSql =
     "INSERT INTO orders (total_price) VALUES (?)";
 
   db.query(orderSql, [totalPrice], (err, orderResult) => {
     if (err) {
       console.log(err);
-
       return res.status(500).json({
         message: "Order Error",
       });
@@ -23,7 +24,6 @@ router.post("/", (req, res) => {
 
     const orderId = orderResult.insertId;
 
-    // เตรียม order items
     const orderItems = cartItems.map((item) => [
       orderId,
       item.id,
@@ -40,74 +40,84 @@ router.post("/", (req, res) => {
     db.query(itemSql, [orderItems], (err) => {
       if (err) {
         console.log(err);
-
         return res.status(500).json({
           message: "Order Item Error",
         });
       }
 
-      io.emit("newOrder");
+      // 🔥 FIX: ส่งข้อมูลไป frontend จริง
+      io.emit("newOrder", {
+        orderId,
+        totalPrice,
+      });
 
       res.json({
         message: "Order Created",
+        orderId,
       });
     });
   });
 });
 
+
+// =========================
 // GET ALL ORDERS
+// =========================
 router.get("/", (req, res) => {
   const sql = `
     SELECT * FROM orders
     ORDER BY created_at DESC
   `;
 
-  db.query(sql, async (err, orders) => {
+  db.query(sql, (err, orders) => {
     if (err) {
       console.log(err);
-
       return res.status(500).json({
         message: "Database Error",
       });
     }
 
-    // ดึง items ของแต่ละ order
-    const formattedOrders = await Promise.all(
-      orders.map(async (order) => {
+    const formattedOrders = Promise.all(
+      orders.map((order) => {
         return new Promise((resolve, reject) => {
           const itemSql = `
             SELECT
               order_items.quantity,
               menus.name
             FROM order_items
-            JOIN menus
-            ON order_items.menu_id = menus.id
+            JOIN menus ON order_items.menu_id = menus.id
             WHERE order_items.order_id = ?
           `;
 
-          db.query(
-            itemSql,
-            [order.id],
-            (err, items) => {
-              if (err) {
-                reject(err);
-              }
+          db.query(itemSql, [order.id], (err, items) => {
+            if (err) return reject(err);
 
-              resolve({
-                ...order,
-                items,
-              });
-            }
-          );
+            resolve({
+              ...order,
+              items: items || [],
+            });
+          });
         });
       })
     );
 
-    res.json(formattedOrders);
+    formattedOrders
+      .then((result) => {
+        res.json(result);
+      })
+      .catch((err) => {
+        console.log(err);
+        res.status(500).json({
+          message: "Format Error",
+        });
+      });
   });
 });
 
+
+// =========================
 // UPDATE ORDER STATUS
+// =========================
 router.put("/:id", (req, res) => {
   const { status } = req.body;
 
@@ -117,25 +127,26 @@ router.put("/:id", (req, res) => {
     WHERE id = ?
   `;
 
-  db.query(
-    sql,
-    [status, req.params.id],
-    (err) => {
-      if (err) {
-        console.log(err);
-
-        return res.status(500).json({
-          message: "Update Failed",
-        });
-      }
-
-      io.emit("orderUpdated");
-
-      res.json({
-        message: "Status Updated",
+  db.query(sql, [status, req.params.id], (err) => {
+    if (err) {
+      console.log(err);
+      return res.status(500).json({
+        message: "Update Failed",
       });
     }
-  );
+
+    // 🔥 FIX: ส่ง event พร้อมข้อมูล
+    io.emit("orderUpdated", {
+      orderId: req.params.id,
+      status,
+    });
+
+    res.json({
+      message: "Status Updated",
+      orderId: req.params.id,
+      status,
+    });
+  });
 });
 
 export default router;
