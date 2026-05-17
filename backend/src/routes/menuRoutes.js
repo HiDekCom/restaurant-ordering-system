@@ -19,7 +19,7 @@ router.get("/", async (req, res) => {
 router.post("/", upload.single("image"), async (req, res) => {
   try {
     const { name, price } = req.body;
-    const image = `https://restaurant-backend-c9qm.onrender.com/uploads/${req.file.filename}`;
+    const image = req.file.path;
 
     await db.query(
       "INSERT INTO menus (name, price, image) VALUES ($1, $2, $3)",
