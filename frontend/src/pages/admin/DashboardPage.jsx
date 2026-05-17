@@ -10,7 +10,6 @@ export default function DashboardPage() {
     totalOrders: 0,
     totalRevenue: 0,
   });
-  const [menus, setMenus] = useState([]);
   const [orders, setOrders] = useState([]);
 
   useEffect(() => {
@@ -23,7 +22,6 @@ export default function DashboardPage() {
         axios.get(`${API_URL}/api/menus`),
         axios.get(`${API_URL}/api/orders`),
       ]);
-      setMenus(menusRes.data);
       setOrders(ordersRes.data);
       setStats({
         totalMenus: menusRes.data.length,
@@ -71,37 +69,6 @@ export default function DashboardPage() {
             ฿{stats.totalRevenue.toLocaleString()}
           </p>
         </div>
-      </div>
-
-      {/* MENUS TABLE */}
-      <div className="bg-white rounded-2xl shadow mb-6 overflow-hidden">
-        <h2 className="text-xl font-bold p-5 border-b">🍽️ รายการเมนู</h2>
-        <table className="w-full">
-          <thead className="bg-gray-50">
-            <tr>
-              <th className="text-left p-4 text-gray-500">ID</th>
-              <th className="text-left p-4 text-gray-500">ชื่อเมนู</th>
-              <th className="text-left p-4 text-gray-500">ราคา</th>
-              <th className="text-left p-4 text-gray-500">รูปภาพ</th>
-            </tr>
-          </thead>
-          <tbody>
-            {menus.map((menu) => (
-              <tr key={menu.id} className="border-t hover:bg-gray-50">
-                <td className="p-4 text-gray-500">{menu.id}</td>
-                <td className="p-4 font-bold">{menu.name}</td>
-                <td className="p-4 text-green-600 font-bold">฿{menu.price}</td>
-                <td className="p-4">
-                  <img
-                    src={menu.image}
-                    alt={menu.name}
-                    className="w-16 h-16 object-cover rounded-xl"
-                  />
-                </td>
-              </tr>
-            ))}
-          </tbody>
-        </table>
       </div>
 
       {/* ORDERS TABLE */}
