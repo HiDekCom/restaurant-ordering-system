@@ -122,4 +122,33 @@ export default function DashboardPage() {
               <tr key={order.id} className="border-t hover:bg-gray-50">
                 <td className="p-4">#{order.id}</td>
                 <td className="p-4">
-                  {order.
+                  {order.items?.map((item, i) => (
+                    <span key={i} className="block text-sm">
+                      {item.name} x{item.quantity}
+                    </span>
+                  ))}
+                </td>
+                <td className="p-4 text-green-600 font-bold">
+                  ฿{order.total_price}
+                </td>
+                <td className="p-4">
+                  <span className={`px-3 py-1 rounded-full text-white text-sm ${
+                    order.status === "Completed" ? "bg-green-500" :
+                    order.status === "Cooking" ? "bg-orange-500" :
+                    "bg-gray-400"
+                  }`}>
+                    {order.status}
+                  </span>
+                </td>
+                <td className="p-4 text-sm text-gray-500">
+                  {new Date(order.created_at).toLocaleString("th-TH")}
+                </td>
+              </tr>
+            ))}
+          </tbody>
+        </table>
+      </div>
+
+    </div>
+  );
+}
