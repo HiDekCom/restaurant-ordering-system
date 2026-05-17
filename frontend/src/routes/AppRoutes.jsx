@@ -8,6 +8,7 @@ import KitchenPage from "../pages/kitchen/KitchenPage";
 import AdminPage from "../pages/admin/AdminPage";
 import LoginPage from "../pages/auth/LoginPage";
 import ProtectedRoute from "../components/ProtectedRoute";
+import DashboardPage from "../pages/admin/DashboardPage";
 
 export default function AppRoutes() {
   return (
@@ -32,6 +33,15 @@ export default function AppRoutes() {
           element={
             <ProtectedRoute>
               <AdminPage />
+            </ProtectedRoute>
+          }
+        />
+
+        <Route
+          path="/dashboard"
+          element={
+            <ProtectedRoute>
+              <DashboardPage />
             </ProtectedRoute>
           }
         />
