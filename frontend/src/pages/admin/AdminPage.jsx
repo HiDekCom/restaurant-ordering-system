@@ -57,14 +57,14 @@ export default function AdminPage() {
   return (
     <div className="min-h-screen bg-gray-100 p-5">
 
-      {/* HEADER */}
+      {/* HEADER — เพิ่มปุ่ม Dashboard */}
       <div className="flex justify-between items-center mb-6">
-        <h1 className="text-3xl font-bold">Admin Panel</h1>
+        <h1 className="text-3xl font-bold">Admin Dashboard</h1>
         <button
           onClick={() => navigate("/dashboard")}
-          className="bg-blue-600 text-white px-5 py-3 rounded-xl hover:bg-blue-700"
+          className="bg-black text-white px-5 py-3 rounded-xl hover:bg-gray-800"
         >
-          📊 ดู Dashboard
+          📊 Dashboard
         </button>
       </div>
 
