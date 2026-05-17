@@ -1,32 +1,38 @@
 import { useEffect, useState } from "react";
 import axios from "axios";
+import { useNavigate } from "react-router-dom";
 import API_URL from "../../api/api";
 
 export default function DashboardPage() {
+  const navigate = useNavigate();
   const [stats, setStats] = useState({
     totalMenus: 0,
     totalOrders: 0,
     totalRevenue: 0,
   });
+  const [menus, setMenus] = useState([]);
+  const [orders, setOrders] = useState([]);
 
   useEffect(() => {
-    fetchStats();
+    fetchData();
   }, []);
 
-  const fetchStats = async () => {
+  const fetchData = async () => {
     try {
       const [menusRes, ordersRes] = await Promise.all([
         axios.get(`${API_URL}/api/menus`),
         axios.get(`${API_URL}/api/orders`),
       ]);
 
-      const totalMenus = menusRes.data.length;
-      const totalOrders = ordersRes.data.length;
-      const totalRevenue = ordersRes.data.reduce(
-        (sum, order) => sum + parseFloat(order.total_price || 0), 0
-      );
-
-      setStats({ totalMenus, totalOrders, totalRevenue });
+      setMenus(menusRes.data);
+      setOrders(ordersRes.data);
+      setStats({
+        totalMenus: menusRes.data.length,
+        totalOrders: ordersRes.data.length,
+        totalRevenue: ordersRes.data.reduce(
+          (sum, order) => sum + parseFloat(order.total_price || 0), 0
+        ),
+      });
     } catch (err) {
       console.log(err);
     }
@@ -34,34 +40,105 @@ export default function DashboardPage() {
 
   return (
     <div className="min-h-screen bg-gray-100 p-5">
-      <h1 className="text-3xl font-bold mb-6">
-        Admin Dashboard
-      </h1>
 
-      <div className="grid md:grid-cols-3 gap-5">
+      {/* HEADER */}
+      <div className="flex justify-between items-center mb-6">
+        <h1 className="text-3xl font-bold">Dashboard</h1>
+        <button
+          onClick={() => navigate("/admin")}
+          className="bg-gray-600 text-white px-5 py-3 rounded-xl hover:bg-gray-700"
+        >
+          ← กลับหน้า Admin
+        </button>
+      </div>
 
+      {/* STATS */}
+      <div className="grid md:grid-cols-3 gap-5 mb-8">
         <div className="bg-white p-5 rounded-2xl shadow">
           <h2 className="text-gray-500">จำนวนเมนูทั้งหมด</h2>
-          <p className="text-4xl font-bold mt-2 text-blue-600">
-            {stats.totalMenus}
-          </p>
+          <p className="text-4xl font-bold mt-2 text-blue-600">{stats.totalMenus}</p>
         </div>
-
         <div className="bg-white p-5 rounded-2xl shadow">
           <h2 className="text-gray-500">จำนวนออเดอร์ทั้งหมด</h2>
-          <p className="text-4xl font-bold mt-2 text-orange-500">
-            {stats.totalOrders}
-          </p>
+          <p className="text-4xl font-bold mt-2 text-orange-500">{stats.totalOrders}</p>
         </div>
-
         <div className="bg-white p-5 rounded-2xl shadow">
           <h2 className="text-gray-500">รายได้รวม</h2>
           <p className="text-4xl font-bold mt-2 text-green-600">
             ฿{stats.totalRevenue.toLocaleString()}
           </p>
         </div>
-
       </div>
+
+      {/* MENUS TABLE */}
+      <div className="bg-white rounded-2xl shadow mb-6 overflow-hidden">
+        <h2 className="text-xl font-bold p-5 border-b">🍽️ รายการเมนู</h2>
+        <table className="w-full">
+          <thead className="bg-gray-50">
+            <tr>
+              <th className="text-left p-4">ID</th>
+              <th className="text-left p-4">ชื่อเมนู</th>
+              <th className="text-left p-4">ราคา</th>
+              <th className="text-left p-4">รูปภาพ</th>
+            </tr>
+          </thead>
+          <tbody>
+            {menus.map((menu) => (
+              <tr key={menu.id} className="border-t hover:bg-gray-50">
+                <td className="p-4">{menu.id}</td>
+                <td className="p-4">{menu.name}</td>
+                <td className="p-4 text-green-600 font-bold">฿{menu.price}</td>
+                <td className="p-4">
+                  <img src={menu.image} alt={menu.name} className="w-16 h-16 object-cover rounded-xl" />
+                </td>
+              </tr>
+            ))}
+          </tbody>
+        </table>
+      </div>
+
+      {/* ORDERS TABLE */}
+      <div className="bg-white rounded-2xl shadow overflow-hidden">
+        <h2 className="text-xl font-bold p-5 border-b">📋 รายการออเดอร์</h2>
+        <table className="w-full">
+          <thead className="bg-gray-50">
+            <tr>
+              <th className="text-left p-4">Order ID</th>
+              <th className="text-left p-4">รายการ</th>
+              <th className="text-left p-4">ราคารวม</th>
+              <th className="text-left p-4">สถานะ</th>
+              <th className="text-left p-4">เวลา</th>
+            </tr>
+          </thead>
+          <tbody>
+            {orders.map((order) => (
+              <tr key={order.id} className="border-t hover:bg-gray-50">
+                <td className="p-4">#{order.id}</td>
+                <td className="p-4">
+                  {order.items?.map((item, i) => (
+                    <span key={i} className="block text-sm">
+                      {item.name} x{item.quantity}
+                    </span>
+                  ))}
+                </td>
+                <td className="p-4 text-green-600 font-bold">฿{order.total_price}</td>
+                <td className="p-4">
+                  <span className={`px-3 py-1 rounded-full text-white text-sm ${
+                    order.status === "Completed" ? "bg-green-500" :
+                    order.status === "Cooking" ? "bg-orange-500" : "bg-gray-400"
+                  }`}>
+                    {order.status}
+                  </span>
+                </td>
+                <td className="p-4 text-sm text-gray-500">
+                  {new Date(order.created_at).toLocaleString("th-TH")}
+                </td>
+              </tr>
+            ))}
+          </tbody>
+        </table>
+      </div>
+
     </div>
   );
 }
