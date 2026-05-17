@@ -68,6 +68,14 @@ export default function AdminPage() {
         </button>
       </div>
 
+      {/* STATS */}
+      <div className="bg-white p-5 rounded-2xl shadow mb-6">
+        <h2 className="text-gray-500">จำนวนเมนูทั้งหมด</h2>
+        <p className="text-4xl font-bold mt-2 text-blue-600">
+          {menus.length}
+        </p>
+      </div>
+
       {/* FORM */}
       <form
         onSubmit={handleSubmit}
