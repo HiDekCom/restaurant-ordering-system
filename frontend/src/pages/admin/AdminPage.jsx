@@ -69,12 +69,9 @@ export default function AdminPage() {
       </div>
 
       {/* STATS */}
-      <div className="bg-white p-5 rounded-2xl shadow mb-6">
-        <h2 className="text-gray-500">จำนวนเมนูทั้งหมด</h2>
-        <p className="text-4xl font-bold mt-2 text-blue-600">
-          {menus.length}
-        </p>
-      </div>
+      <p className="text-gray-500 text-sm mb-4">
+        เมนูทั้งหมด: <span className="font-bold text-gray-700">{menus.length} รายการ</span>
+      </p>
 
       {/* FORM */}
       <form
