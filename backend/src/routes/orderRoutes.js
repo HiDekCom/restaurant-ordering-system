@@ -7,11 +7,11 @@ const router = express.Router();
 // CREATE ORDER
 router.post("/", async (req, res) => {
   try {
-    const { cartItems, totalPrice } = req.body;
+    const { cartItems, totalPrice, tableNumber } = req.body;
 
     const orderResult = await db.query(
-      "INSERT INTO orders (total_price) VALUES ($1) RETURNING id",
-      [totalPrice]
+      "INSERT INTO orders (total_price, table_number) VALUES ($1, $2) RETURNING id",
+      [totalPrice, tableNumber]
     );
 
     const orderId = orderResult.rows[0].id;
@@ -55,6 +55,54 @@ router.get("/", async (req, res) => {
   } catch (err) {
     console.log(err);
     res.status(500).json({ message: "Database Error" });
+  }
+});
+
+// GET ORDERS BY TABLE
+router.get("/:tableNumber", async (req, res) => {
+  try {
+
+    const orders = await db.query(
+      `
+      SELECT *
+      FROM orders
+      WHERE table_number = $1
+      ORDER BY created_at DESC
+      `,
+      [req.params.tableNumber]
+    );
+
+    const formattedOrders = await Promise.all(
+
+      orders.rows.map(async (order) => {
+
+        const items = await db.query(
+          `
+          SELECT order_items.quantity, menus.name
+          FROM order_items
+          JOIN menus
+          ON order_items.menu_id = menus.id
+          WHERE order_items.order_id = $1
+          `,
+          [order.id]
+        );
+
+        return {
+          ...order,
+          items: items.rows || [],
+        };
+      })
+    );
+
+    res.json(formattedOrders);
+
+  } catch (err) {
+
+    console.log(err);
+
+    res.status(500).json({
+      message: "Database Error"
+    });
   }
 });
 

@@ -7,15 +7,26 @@ import { useEffect, useState } from "react";
 import axios from "axios";
 
 import API_URL from "../../api/api";
+import { useSearchParams } from "react-router-dom";
 
 export default function MenuPage() {
 
   const [menus, setMenus] = useState([]);
   const [orders, setOrders] = useState([]);
-
   const [selectedCategory, setSelectedCategory] = useState("All");
-
   const [showOrders, setShowOrders] = useState(false);
+
+  const [searchParams] = useSearchParams();
+  const tableNumber = searchParams.get("table");
+
+  useEffect(() => {
+  if (tableNumber) {
+    localStorage.setItem(
+      "tableNumber",
+      tableNumber
+    );
+  }
+}, [tableNumber]);
 
   useEffect(() => {
     fetchMenus();
@@ -37,9 +48,9 @@ export default function MenuPage() {
   // FETCH ORDERS
   const fetchOrders = async () => {
     try {
-      const response = await axios.get(
-        `${API_URL}/api/orders`
-      );
+      const currentTable =
+        localStorage.getItem("tableNumber");
+      const response = await axios.get(`${API_URL}/api/orders/${currentTable}`);
       setOrders(response.data);
     } catch (error) {
       console.log(error);
