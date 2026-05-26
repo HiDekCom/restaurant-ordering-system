@@ -9,7 +9,6 @@ import AdminPage from "../pages/admin/AdminPage";
 import LoginPage from "../pages/auth/LoginPage";
 import ProtectedRoute from "../components/ProtectedRoute";
 import DashboardPage from "../pages/admin/DashboardPage";
-import MyOrdersPage from "../pages/customer/MyOrdersPage";
 
 export default function AppRoutes() {
   return (
@@ -50,11 +49,6 @@ export default function AppRoutes() {
         <Route
           path="/login"
           element={<LoginPage />}
-        />
-        
-        <Route
-          path="/my-orders"
-          element={<MyOrdersPage />}
         />
 
       </Routes>
