@@ -20,13 +20,13 @@ export default function MenuPage() {
   const tableNumber = searchParams.get("table");
 
   useEffect(() => {
-  if (tableNumber) {
-    localStorage.setItem(
-      "tableNumber",
-      tableNumber
-    );
-  }
-}, [tableNumber]);
+    if (tableNumber) {
+      localStorage.setItem(
+        "tableNumber",
+        tableNumber
+      );
+    }
+  }, [tableNumber]);
 
   useEffect(() => {
     fetchMenus();

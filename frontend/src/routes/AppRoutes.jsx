@@ -14,9 +14,15 @@ export default function AppRoutes() {
   return (
     <BrowserRouter>
       <Routes>
-        <Route path="/" element={<MenuPage />} />
+        <Route 
+          path="/menu" 
+          element={<MenuPage />} 
+        />
 
-        <Route path="/cart" element={<CartPage />} />
+        <Route 
+          path="/cart" 
+          element={<CartPage />} 
+        />
 
         <Route
           path="/status"
