@@ -89,71 +89,78 @@ export default function MenuPage() {
           ))}
         </div>
 
-        {/* MY ORDERS */}
+        {/* MY ORDERS MODAL */}
         {showOrders && (
-          <div className="mt-16">
-            <h2 className="text-3xl font-bold mb-6">
-              🧾 Your Orders
-            </h2>
+          <div className="fixed inset-0 bg-black/50 flex justify-center items-center z-50 p-4">
+            <div className="bg-white w-full max-w-2xl rounded-3xl shadow-2xl p-6 relative max-h-[80vh] overflow-y-auto">
 
-            <div className="space-y-5">
-              {orders.length === 0 ? (
-                <div className="bg-white p-10 rounded-2xl shadow text-center text-gray-500">
-                  No orders yet
-                </div>
-              ) : (
-                orders.map((order) => (
-                  <div
-                    key={order.id}
-                    className="bg-white p-5 rounded-2xl shadow"
-                  >
-                    {/* ORDER HEADER */}
-                    <div className="flex justify-between items-center mb-4">
-                      <div>
-                        <h3 className="font-bold text-xl">
-                          Order #{order.id}
-                        </h3>
+              {/* CLOSE BUTTON */}
+              <button
+                onClick={() => setShowOrders(false)}
+                className="absolute top-4 right-4 text-2xl font-bold text-gray-500 hover:text-black"
+              >
+                ✕
+              </button>
 
-                        <p className="text-gray-500">
-                          {new Date(order.created_at)
-                            .toLocaleString()}
-                        </p>
-                      </div>
+              {/* TITLE */}
+              <h2 className="text-3xl font-bold mb-6">
+                🧾 Your Orders
+              </h2>
 
-                      <span className="bg-yellow-100 text-yellow-700 px-4 py-2 rounded-full">
-                        {order.status || "Pending"}
-                      </span>
-                    </div>
+              <div className="space-y-5">
+                {orders.length === 0 ? (
+                  <div className="text-center text-gray-500 py-10">
+                    No orders yet
+                  </div>
+                ) : (
+                  orders.map((order) => (
+                    <div
+                      key={order.id}
+                      className="border rounded-2xl p-5"
+                    >
 
-                    {/* ORDER ITEMS */}
-                    <div className="space-y-2">
-                      {order.items?.map((item, index) => (
-                        <div
-                          key={index}
-                          className="flex justify-between"
-                        >
-                          <p>
-                            {item.name}
-                          </p>
+                      {/* HEADER */}
+                      <div className="flex justify-between items-center mb-4">
+                        <div>
+                          <h3 className="font-bold text-xl">
+                            Order #{order.id}
+                          </h3>
 
-                          <p>
-                            x{item.quantity}
+                          <p className="text-gray-500 text-sm">
+                            {new Date(order.created_at)
+                              .toLocaleString()}
                           </p>
                         </div>
-                      ))}
-                    </div>
 
-                    {/* TOTAL */}
-                    <div className="border-t mt-4 pt-4 flex justify-between font-bold">
-                      <p>Total</p>
+                        <span className="bg-yellow-100 text-yellow-700 px-4 py-2 rounded-full text-sm">
+                          {order.status || "Pending"}
+                        </span>
+                      </div>
 
-                      <p>
-                        ฿{order.total_price}
-                      </p>
+                      {/* ITEMS */}
+                      <div className="space-y-2">
+                        {order.items?.map((item, index) => (
+                          <div
+                            key={index}
+                            className="flex justify-between"
+                          >
+                            <p>{item.name}</p>
+                            <p>x{item.quantity}</p>
+                          </div>
+                        ))}
+                      </div>
+
+                      {/* TOTAL */}
+                      <div className="border-t mt-4 pt-4 flex justify-between font-bold">
+                        <p>Total</p>
+                        <p>
+                          ฿{order.total_price}
+                        </p>
+                      </div>
                     </div>
-                  </div>
-                ))
-              )}
+                  ))
+                )}
+              </div>
             </div>
           </div>
         )}
