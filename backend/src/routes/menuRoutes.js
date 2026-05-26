@@ -33,6 +33,40 @@ router.post("/", upload.single("image"), async (req, res) => {
   }
 });
 
+// UPDATE MENU
+router.put("/:id", upload.single("image"), async (req, res) => {
+  try {
+    const { name, price } = req.body;
+
+    let image = null;
+
+    // ถ้ามีอัปโหลดรูปใหม่
+    if (req.file) {
+      image = req.file.path;
+    }
+
+    // ถ้ามีรูปใหม่ → update รูป
+    if (image) {
+      await db.query(
+        "UPDATE menus SET name = $1, price = $2, image = $3 WHERE id = $4",
+        [name, price, image, req.params.id]
+      );
+    } else {
+      // ถ้าไม่มีรูปใหม่ → ไม่แก้รูป
+      await db.query(
+        "UPDATE menus SET name = $1, price = $2 WHERE id = $3",
+        [name, price, req.params.id]
+      );
+    }
+
+    res.json({ message: "Menu Updated" });
+
+  } catch (err) {
+    console.log(err);
+    res.status(500).json({ message: "Update Failed" });
+  }
+});
+
 // DELETE MENU
 router.delete("/:id", async (req, res) => {
   try {

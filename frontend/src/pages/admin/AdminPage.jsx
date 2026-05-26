@@ -30,6 +30,18 @@ export default function AdminPage() {
     setFormData({ ...formData, [name]: files ? files[0] : value });
   };
 
+  const handleEdit = (menu) => {
+    setEditingId(menu.id);
+
+    setFormData({
+      name: menu.name,
+      price: menu.price,
+      image: null,
+    });
+  };
+
+  const [editingId, setEditingId] = useState(null);
+
   const handleSubmit = async (e) => {
     e.preventDefault();
     try {
@@ -42,6 +54,39 @@ export default function AdminPage() {
       setFormData({ name: "", price: "", image: null });
     } catch (error) {
       console.log("Create error:", error);
+    }
+  };
+
+  const updateMenu = async (e) => {
+    e.preventDefault();
+
+    try {
+      const data = new FormData();
+
+      data.append("name", formData.name);
+      data.append("price", formData.price);
+
+      if (formData.image) {
+        data.append("image", formData.image);
+      }
+
+      await axios.put(
+        `${API_URL}/api/menus/${editingId}`,
+        data
+      );
+
+      fetchMenus();
+
+      setEditingId(null);
+
+      setFormData({
+        name: "",
+        price: "",
+        image: null,
+      });
+
+    } catch (error) {
+      console.log("Update error:", error);
     }
   };
 
@@ -75,7 +120,7 @@ export default function AdminPage() {
 
       {/* FORM */}
       <form
-        onSubmit={handleSubmit}
+        onSubmit={editingId ? updateMenu : handleSubmit}
         className="bg-white p-5 rounded-2xl shadow mb-6"
       >
         <div className="grid md:grid-cols-3 gap-4">
@@ -114,9 +159,29 @@ export default function AdminPage() {
           />
         )}
 
-        <button className="mt-4 bg-black text-white px-5 py-3 rounded-xl">
-          Add Menu
-        </button>
+        <div className="flex gap-3 mt-4">
+          <button className="bg-black text-white px-5 py-3 rounded-xl">
+            {editingId ? "Update Menu" : "Add Menu"}
+          </button>
+
+          {editingId && (
+            <button
+              type="button"
+              onClick={() => {
+                setEditingId(null);
+
+                setFormData({
+                  name: "",
+                  price: "",
+                  image: null,
+                });
+              }}
+              className="bg-gray-300 px-5 py-3 rounded-xl"
+            >
+              Cancel
+            </button>
+          )}
+        </div>
       </form>
 
       {/* MENU LIST */}
@@ -124,12 +189,17 @@ export default function AdminPage() {
         {menus.map((menu) => (
           <div key={menu.id} className="bg-white rounded-2xl shadow overflow-hidden">
             <img src={menu.image} alt={menu.name} className="w-full h-48 object-cover" />
-            <div className="p-4">
-              <h2 className="font-bold text-xl">{menu.name}</h2>
-              <p className="text-green-600 font-bold mt-2">฿{menu.price}</p>
+            <div className="flex gap-2 mt-4">
+              <button
+                onClick={() => handleEdit(menu)}
+                className="bg-blue-500 text-white px-4 py-2 rounded-xl hover:bg-blue-600"
+              >
+                Edit
+              </button>
+
               <button
                 onClick={() => deleteMenu(menu.id)}
-                className="mt-4 bg-red-500 text-white px-4 py-2 rounded-xl hover:bg-red-600"
+                className="bg-red-500 text-white px-4 py-2 rounded-xl hover:bg-red-600"
               >
                 Delete
               </button>
