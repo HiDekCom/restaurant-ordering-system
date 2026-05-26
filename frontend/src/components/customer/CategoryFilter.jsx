@@ -1,28 +1,39 @@
-const categories = [
-  "All",
-  "Rice",
-  "Noodle",
-  "Drink",
-  "Dessert",
-];
+export default function CategoryFilter({
+  selectedCategory,
+  setSelectedCategory,
+}) {
 
-export default function CategoryFilter() {
+  const categories = [
+    "All",
+    "Rice",
+    "Noodle",
+    "Drink",
+    "Dessert",
+  ];
+
   return (
-    <div className="flex gap-3 overflow-x-auto py-2">
-      {categories.map((category, index) => (
+    <div className="flex gap-4 flex-wrap">
+
+      {categories.map((category) => (
+
         <button
-          key={index}
-          className={`px-5 py-2 rounded-full whitespace-nowrap transition
+          key={category}
+          onClick={() => setSelectedCategory(category)}
+          className={`
+            px-6 py-3 rounded-full border transition
+
             ${
-              index === 0
+              selectedCategory === category
                 ? "bg-black text-white"
-                : "bg-white shadow-sm"
+                : "bg-white"
             }
           `}
         >
           {category}
         </button>
+
       ))}
+
     </div>
   );
 }

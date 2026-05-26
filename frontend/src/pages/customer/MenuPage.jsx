@@ -11,6 +11,7 @@ import API_URL from "../../api/api";
 export default function MenuPage() {
 
   const [menus, setMenus] = useState([]);
+  const [selectedCategory, setSelectedCategory] = useState("All");
 
   useEffect(() => {
     fetchMenus();
@@ -31,6 +32,13 @@ export default function MenuPage() {
     }
   };
 
+  const filteredMenus =
+    selectedCategory === "All"
+      ? menus
+      : menus.filter(
+          (menu) => menu.category === selectedCategory
+        );
+
   return (
     <div className="min-h-screen bg-gray-100">
 
@@ -41,12 +49,15 @@ export default function MenuPage() {
         <SearchBar />
 
         <div className="mt-5">
-          <CategoryFilter />
+          <CategoryFilter 
+            selectedCategory={selectedCategory}
+            setSelectedCategory={setSelectedCategory}
+          />
         </div>
 
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 mt-6">
 
-          {menus.map((menu) => (
+          {filteredMenus.map((menu) => (
             <MenuCard
               key={menu.id}
               menu={menu}
