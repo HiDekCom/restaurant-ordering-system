@@ -22,7 +22,7 @@ router.post("/", upload.single("image"), async (req, res) => {
     const image = req.file.path;
 
     await db.query(
-      "INSERT INTO menus (name, price, image) VALUES ($1, $2, $3, $4)",
+      "INSERT INTO menus (name, price, category, image) VALUES ($1, $2, $3, $4)",
       [name, price, category, image]
     );
 
