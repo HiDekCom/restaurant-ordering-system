@@ -64,6 +64,15 @@ export default function MenuPage() {
       : menus.filter(
           (menu) => menu.category === selectedCategory
         );
+  
+  const grandTotal = orders.reduce((sum, order) => {
+    const orderTotal =
+      order.items?.reduce((s, item) => {
+        return s + (item.price * item.quantity);
+      }, 0) || 0;
+
+    return sum + orderTotal;
+  }, 0);
 
   return (
     <div className="min-h-screen bg-gray-100">
@@ -156,8 +165,12 @@ export default function MenuPage() {
                             key={index}
                             className="flex justify-between"
                           >
-                            <p>{item.name}</p>
-                            <p>x{item.quantity}</p>
+                            <p>
+                              {item.name} <span className="text-gray-400">฿{item.price}</span>
+                            </p>
+                            <p>
+                              x{item.quantity} = ฿{item.price * item.quantity}
+                            </p>
                           </div>
                         ))}
                       </div>
@@ -173,6 +186,13 @@ export default function MenuPage() {
                   ))
                 )}
               </div>
+              
+              {/* GRAND TOTAL */}
+              <div className="border-t mt-6 pt-4 flex justify-between text-xl font-bold">
+                <p>Total All Orders</p>
+                <p>฿{grandTotal}</p>
+              </div>
+
             </div>
           </div>
         )}
