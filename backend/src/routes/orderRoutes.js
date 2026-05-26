@@ -89,7 +89,7 @@ router.get("/:tableNumber", async (req, res) => {
 
         const items = await db.query(
           `
-          SELECT order_items.quantity, menus.name
+          SELECT order_items.quantity, order_items.price, menus.name
           FROM order_items
           JOIN menus
           ON order_items.menu_id = menus.id
