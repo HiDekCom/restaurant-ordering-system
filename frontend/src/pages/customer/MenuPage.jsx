@@ -19,14 +19,14 @@ export default function MenuPage() {
   const [searchParams] = useSearchParams();
   const tableNumber = searchParams.get("table");
 
-  useEffect(() => {
-    if (tableNumber) {
-      localStorage.setItem(
-        "tableNumber",
-        tableNumber
-      );
-    }
-  }, [tableNumber]);
+  // useEffect(() => {
+  //   if (tableNumber) {
+  //     localStorage.setItem(
+  //       "tableNumber",
+  //       tableNumber
+  //     );
+  //   }
+  // }, [tableNumber]);
 
   useEffect(() => {
     fetchMenus();
@@ -48,8 +48,8 @@ export default function MenuPage() {
   // FETCH ORDERS
   const fetchOrders = async () => {
     try {
-      const currentTable =
-        localStorage.getItem("tableNumber");
+      // const currentTable =
+      //   localStorage.getItem("tableNumber");
       const response = await axios.get(`${API_URL}/api/orders/${currentTable}`);
       setOrders(response.data);
     } catch (error) {

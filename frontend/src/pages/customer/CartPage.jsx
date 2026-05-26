@@ -23,8 +23,8 @@ export default function CartPage() {
 
   const handleConfirmOrder = async () => {
     try {
-      const tableNumber =
-        localStorage.getItem("tableNumber");
+      // const tableNumber =
+      //   localStorage.getItem("tableNumber");
   
       await axios.post(`${API_URL}/api/orders`, {
         cartItems,
