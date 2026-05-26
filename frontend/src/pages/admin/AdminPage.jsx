@@ -9,6 +9,7 @@ export default function AdminPage() {
   const [formData, setFormData] = useState({
     name: "",
     price: "",
+    category: "",
     image: null,
   });
 
@@ -36,6 +37,7 @@ export default function AdminPage() {
     setFormData({
       name: menu.name,
       price: menu.price,
+      category: menu.category,
       image: null,
     });
   };
@@ -48,10 +50,11 @@ export default function AdminPage() {
       const data = new FormData();
       data.append("name", formData.name);
       data.append("price", formData.price);
+      data.append("category", formData.category);
       data.append("image", formData.image);
       await axios.post(`${API_URL}/api/menus`, data);
       fetchMenus();
-      setFormData({ name: "", price: "", image: null });
+      setFormData({ name: "", price: "", category: "", image: null });
     } catch (error) {
       console.log("Create error:", error);
     }
@@ -65,6 +68,7 @@ export default function AdminPage() {
 
       data.append("name", formData.name);
       data.append("price", formData.price);
+      data.append("category", formData.category);
 
       if (formData.image) {
         data.append("image", formData.image);
@@ -82,6 +86,7 @@ export default function AdminPage() {
       setFormData({
         name: "",
         price: "",
+        category: "",
         image: null,
       });
 
@@ -123,7 +128,7 @@ export default function AdminPage() {
         onSubmit={editingId ? updateMenu : handleSubmit}
         className="bg-white p-5 rounded-2xl shadow mb-6"
       >
-        <div className="grid md:grid-cols-3 gap-4">
+        <div className="grid md:grid-cols-4 gap-4">
           <input
             type="text"
             name="name"
@@ -142,6 +147,21 @@ export default function AdminPage() {
             className="border p-3 rounded-xl"
             required
           />
+
+          <select
+            name="category"
+            value={formData.category}
+            onChange={handleChange}
+            className="border p-3 rounded-xl"
+            required
+          >
+            <option value="">Select Category</option>
+            <option value="Rice">Rice</option>
+            <option value="Noodle">Noodle</option>
+            <option value="Drink">Drink</option>
+            <option value="Dessert">Dessert</option>
+          </select>
+
           <input
             type="file"
             name="image"
@@ -173,6 +193,7 @@ export default function AdminPage() {
                 setFormData({
                   name: "",
                   price: "",
+                  category: "",
                   image: null,
                 });
               }}
