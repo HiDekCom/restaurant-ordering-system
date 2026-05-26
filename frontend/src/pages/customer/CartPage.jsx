@@ -4,8 +4,6 @@ import {useNavigate, useSearchParams} from "react-router-dom";
 import axios from "axios";
 import API_URL from "../../api/api";
 
-import {useNavigate, useSearchParams} from "react-router-dom";
-
 export default function CartPage() {
   const navigate = useNavigate();
   const [searchParams] = useSearchParams();
@@ -40,7 +38,7 @@ export default function CartPage() {
       });
 
       clearCart();
-      navigate(`/cart?table=${tableNumber}`);
+      navigate(`/menu?table=${tableNumber}`);
       alert("Order Success!");
     } catch (error) {
       console.log(error);

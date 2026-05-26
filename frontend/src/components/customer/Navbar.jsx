@@ -1,15 +1,17 @@
 import { useContext } from "react";
-
 import { FaShoppingCart } from "react-icons/fa";
-
 import { CartContext } from "../../context/CartContext";
-
-import { useNavigate } from "react-router-dom";
-
+import { useNavigate, useSearchParams } from "react-router-dom";
 export default function Navbar() {
   const { cartItems } = useContext(CartContext);
 
   const navigate = useNavigate();
+
+  const [searchParams] =
+  useSearchParams();
+
+  const tableNumber =
+    searchParams.get("table");
 
   // รวมจำนวนสินค้า
   const totalQty = cartItems.reduce(
@@ -27,7 +29,7 @@ export default function Navbar() {
 
         {/* Cart Button */}
         <button
-          onClick={() => navigate("/cart")}
+          onClick={() => navigate(`/cart?table=${tableNumber}`)}
           className="relative"
         >
           <FaShoppingCart className="text-2xl text-gray-700" />
