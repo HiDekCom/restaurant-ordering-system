@@ -23,9 +23,9 @@ export default function MenuCard({ menu }) {
           {menu.name}
         </h2>
 
-        <p className="text-gray-500 text-sm mt-1">
+        {/* <p className="text-gray-500 text-sm mt-1">
           Delicious food menu
-        </p>
+        </p> */}
 
         <div className="flex justify-between items-center mt-4">
           <p className="text-xl font-bold text-green-600">

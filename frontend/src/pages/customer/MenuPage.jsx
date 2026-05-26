@@ -19,37 +19,22 @@ export default function MenuPage() {
   const [searchParams] = useSearchParams();
   const tableNumber = searchParams.get("table");
 
-  // useEffect(() => {
-  //   if (tableNumber) {
-  //     localStorage.setItem(
-  //       "tableNumber",
-  //       tableNumber
-  //     );
-  //   }
-  // }, [tableNumber]);
-
   useEffect(() => {
     fetchMenus();
     fetchOrders();
   }, [tableNumber]);
 
-  // FETCH MENUS
   const fetchMenus = async () => {
     try {
-      const response = await axios.get(
-        `${API_URL}/api/menus`
-      );
+      const response = await axios.get(`${API_URL}/api/menus`);
       setMenus(response.data);
     } catch (error) {
       console.log(error);
     }
   };
 
-  // FETCH ORDERS
   const fetchOrders = async () => {
     try {
-      // const currentTable =
-      //   localStorage.getItem("tableNumber");
       const response = await axios.get(`${API_URL}/api/orders/${tableNumber}`);
       setOrders(response.data);
     } catch (error) {
@@ -57,21 +42,13 @@ export default function MenuPage() {
     }
   };
 
-  // FILTER CATEGORY
   const filteredMenus =
     selectedCategory === "All"
       ? menus
-      : menus.filter(
-          (menu) => menu.category === selectedCategory
-        );
-  
-  const grandTotal = orders.reduce((sum, order) => {
-    const orderTotal =
-      order.items?.reduce((s, item) => {
-        return s + (item.price * item.quantity);
-      }, 0) || 0;
+      : menus.filter((menu) => menu.category === selectedCategory);
 
-    return sum + orderTotal;
+  const grandTotal = orders.reduce((sum, order) => {
+    return sum + (parseFloat(order.total_price) || 0);
   }, 0);
 
   return (
@@ -102,10 +79,7 @@ export default function MenuPage() {
         {/* MENU LIST */}
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 mt-6">
           {filteredMenus.map((menu) => (
-            <MenuCard
-              key={menu.id}
-              menu={menu}
-            />
+            <MenuCard key={menu.id} menu={menu} />
           ))}
         </div>
 
@@ -123,9 +97,7 @@ export default function MenuPage() {
               </button>
 
               {/* TITLE */}
-              <h2 className="text-3xl font-bold mb-6">
-                🧾 Your Orders
-              </h2>
+              <h2 className="text-3xl font-bold mb-6">🧾 Your Orders</h2>
 
               <div className="space-y-5">
                 {orders.length === 0 ? (
@@ -134,25 +106,18 @@ export default function MenuPage() {
                   </div>
                 ) : (
                   orders.map((order) => (
-                    <div
-                      key={order.id}
-                      className="border rounded-2xl p-5"
-                    >
+                    <div key={order.id} className="border rounded-2xl p-5">
 
                       {/* HEADER */}
                       <div className="flex justify-between items-center mb-4">
                         <div>
                           <h3 className="font-bold text-xl">
-                            Table {order.table_number}
-                            - Order #{order.queue_number}
+                            Table {order.table_number} - Order #{order.queue_number}
                           </h3>
-
                           <p className="text-gray-500 text-sm">
-                            {new Date(order.created_at)
-                              .toLocaleString()}
+                            {new Date(order.created_at).toLocaleString()}
                           </p>
                         </div>
-
                         <span className="bg-yellow-100 text-yellow-700 px-4 py-2 rounded-full text-sm">
                           {order.status || "Pending"}
                         </span>
@@ -161,16 +126,14 @@ export default function MenuPage() {
                       {/* ITEMS */}
                       <div className="space-y-2">
                         {order.items?.map((item, index) => (
-                          <div
-                            key={index}
-                            className="flex justify-between"
-                          >
+                          <div key={index} className="flex justify-between">
                             <p>
-                              {item.name} <span className="text-gray-400">฿{item.price}</span>
+                              {item.name}{" "}
+                              <span className="text-gray-400">
+                                ฿{item.price ?? item.unit_price ?? 0}
+                              </span>
                             </p>
-                            <p>
-                              x{item.quantity} = ฿{item.price * item.quantity}
-                            </p>
+                            <p>x{item.quantity}</p>
                           </div>
                         ))}
                       </div>
@@ -178,15 +141,14 @@ export default function MenuPage() {
                       {/* TOTAL */}
                       <div className="border-t mt-4 pt-4 flex justify-between font-bold">
                         <p>Total</p>
-                        <p>
-                          ฿{order.total_price}
-                        </p>
+                        <p>฿{order.total_price}</p>
                       </div>
+
                     </div>
                   ))
                 )}
               </div>
-              
+
               {/* GRAND TOTAL */}
               <div className="border-t mt-6 pt-4 flex justify-between text-xl font-bold">
                 <p>Total All Orders</p>
