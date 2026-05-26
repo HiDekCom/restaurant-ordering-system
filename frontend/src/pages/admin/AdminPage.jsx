@@ -189,20 +189,36 @@ export default function AdminPage() {
         {menus.map((menu) => (
           <div key={menu.id} className="bg-white rounded-2xl shadow overflow-hidden">
             <img src={menu.image} alt={menu.name} className="w-full h-48 object-cover" />
-            <div className="flex gap-2 mt-4">
-              <button
-                onClick={() => handleEdit(menu)}
-                className="bg-blue-500 text-white px-4 py-2 rounded-xl hover:bg-blue-600"
-              >
-                Edit
-              </button>
 
-              <button
-                onClick={() => deleteMenu(menu.id)}
-                className="bg-red-500 text-white px-4 py-2 rounded-xl hover:bg-red-600"
-              >
-                Delete
-              </button>
+            <div className="p-4">
+
+              {/* NAME */}
+              <h2 className="text-xl font-bold text-gray-800">
+                {menu.name}
+              </h2>
+
+              {/* PRICE */}
+              <p className="text-green-600 font-bold text-lg mt-2">
+                ฿{menu.price}
+              </p>
+
+              {/* BUTTONS */}
+              <div className="flex gap-2 mt-4">
+                <button
+                  onClick={() => handleEdit(menu)}
+                  className="bg-blue-500 text-white px-4 py-2 rounded-xl hover:bg-blue-600"
+                >
+                  Edit
+                </button>
+
+                <button
+                  onClick={() => deleteMenu(menu.id)}
+                  className="bg-red-500 text-white px-4 py-2 rounded-xl hover:bg-red-600"
+                >
+                  Delete
+                </button>
+              </div>
+
             </div>
           </div>
         ))}
