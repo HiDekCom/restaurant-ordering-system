@@ -167,7 +167,6 @@ export default function AdminPage() {
             name="image"
             onChange={handleChange}
             className="border p-3 rounded-xl"
-            required
           />
         </div>
 
