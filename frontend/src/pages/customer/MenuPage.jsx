@@ -31,7 +31,7 @@ export default function MenuPage() {
   useEffect(() => {
     fetchMenus();
     fetchOrders();
-  }, []);
+  }, [tableNumber]);
 
   // FETCH MENUS
   const fetchMenus = async () => {
@@ -50,7 +50,7 @@ export default function MenuPage() {
     try {
       // const currentTable =
       //   localStorage.getItem("tableNumber");
-      const response = await axios.get(`${API_URL}/api/orders/${currentTable}`);
+      const response = await axios.get(`${API_URL}/api/orders/${tableNumber}`);
       setOrders(response.data);
     } catch (error) {
       console.log(error);
