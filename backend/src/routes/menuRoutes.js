@@ -36,6 +36,7 @@ router.post("/", upload.single("image"), async (req, res) => {
 // UPDATE MENU
 router.put("/:id", upload.single("image"), async (req, res) => {
   try {
+
     const { name, price, category } = req.body;
 
     let image = null;
@@ -45,18 +46,31 @@ router.put("/:id", upload.single("image"), async (req, res) => {
       image = req.file.path;
     }
 
-    // ถ้ามีรูปใหม่ → update รูป
+    // มีรูปใหม่
     if (image) {
+
       await db.query(
-        "UPDATE menus SET name = $1, price = $2, category  = $3, , image = $4 WHERE id = $5",
+        `UPDATE menus
+         SET name = $1,
+             price = $2,
+             category = $3,
+             image = $4
+         WHERE id = $5`,
         [name, price, category, image, req.params.id]
       );
+
     } else {
-      // ถ้าไม่มีรูปใหม่ → ไม่แก้รูป
+
+      // ไม่มีรูปใหม่
       await db.query(
-        "UPDATE menus SET name = $1, price = $2 WHERE id = $3",
-        [name, price, req.params.id]
+        `UPDATE menus
+         SET name = $1,
+             price = $2,
+             category = $3
+         WHERE id = $4`,
+        [name, price, category, req.params.id]
       );
+
     }
 
     res.json({ message: "Menu Updated" });
