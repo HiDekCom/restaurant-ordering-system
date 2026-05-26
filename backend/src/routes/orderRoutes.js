@@ -9,11 +9,22 @@ router.post("/", async (req, res) => {
   try {
     const { cartItems, totalPrice, tableNumber } = req.body;
 
+    // GET LAST QUEUE OF TABLE
+    const lastQueue = await db.query(
+      `
+      SELECT MAX(queue_number) as last_queue
+      FROM orders
+      WHERE table_number = $1
+      `,
+      [tableNumber]
+    );
+    const queueNumber =
+      (lastQueue.rows[0].last_queue || 0) + 1;
+
     const orderResult = await db.query(
-      "INSERT INTO orders (total_price, table_number) VALUES ($1, $2) RETURNING id",
+      "INSERT INTO orders (total_price, table_number, queue_number) VALUES ($1, $2, $3) RETURNING id",
       [totalPrice, tableNumber]
     );
-
     const orderId = orderResult.rows[0].id;
 
     for (const item of cartItems) {

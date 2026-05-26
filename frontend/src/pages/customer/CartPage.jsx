@@ -30,6 +30,7 @@ export default function CartPage() {
         cartItems,
         totalPrice,
         tableNumber,
+        queueNumber
       });
 
       clearCart();

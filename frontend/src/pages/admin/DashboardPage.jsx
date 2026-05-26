@@ -87,7 +87,11 @@ export default function DashboardPage() {
           <tbody>
             {orders.map((order) => (
               <tr key={order.id} className="border-t hover:bg-gray-50">
-                <td className="p-4">#{order.id}</td>
+                <td className="p-4">
+                  Table {order.table_number}
+                  - Order #{order.queue_number}
+                </td>
+                
                 <td className="p-4">
                   {order.items?.map((item, i) => (
                     <span key={i} className="block text-sm">

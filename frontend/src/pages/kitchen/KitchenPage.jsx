@@ -67,7 +67,8 @@ export default function KitchenPage() {
             <div className="flex justify-between mb-4">
 
               <h2 className="text-xl font-bold">
-                Order #{order.id}
+                Table {order.table_number}
+                - Order #{order.queue_number}
               </h2>
 
               <div className="text-right">

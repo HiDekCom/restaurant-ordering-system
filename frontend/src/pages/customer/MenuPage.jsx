@@ -134,7 +134,8 @@ export default function MenuPage() {
                       <div className="flex justify-between items-center mb-4">
                         <div>
                           <h3 className="font-bold text-xl">
-                            Order #{order.id}
+                            Table {order.table_number}
+                            - Order #{order.queue_number}
                           </h3>
 
                           <p className="text-gray-500 text-sm">
