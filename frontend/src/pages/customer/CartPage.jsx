@@ -29,8 +29,7 @@ export default function CartPage() {
       await axios.post(`${API_URL}/api/orders`, {
         cartItems,
         totalPrice,
-        tableNumber,
-        queueNumber
+        tableNumber
       });
 
       clearCart();

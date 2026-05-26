@@ -23,7 +23,7 @@ router.post("/", async (req, res) => {
 
     const orderResult = await db.query(
       "INSERT INTO orders (total_price, table_number, queue_number) VALUES ($1, $2, $3) RETURNING id",
-      [totalPrice, tableNumber]
+      [totalPrice, tableNumber, queueNumber]
     );
     const orderId = orderResult.rows[0].id;
 
