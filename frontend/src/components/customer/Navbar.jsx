@@ -25,6 +25,13 @@ export default function Navbar() {
           QR Restaurant
         </h1>
 
+        <button
+          onClick={() => navigate("/my-orders")}
+          className="bg-black text-white px-5 py-2 rounded-xl"
+        >
+          My Orders
+        </button>
+
         {/* Cart Button */}
         <button
           onClick={() => navigate("/cart")}
