@@ -51,7 +51,7 @@ router.get("/", async (req, res) => {
     const formattedOrders = await Promise.all(
       orders.rows.map(async (order) => {
         const items = await db.query(
-          `SELECT order_items.quantity, menus.name
+          `SELECT order_items.quantity, order_items.price, menus.name
            FROM order_items
            JOIN menus ON order_items.menu_id = menus.id
            WHERE order_items.order_id = $1`,
