@@ -9,17 +9,16 @@ router.post("/", async (req, res) => {
   try {
     const { cartItems, totalPrice, tableNumber } = req.body;
 
-    // GET LAST QUEUE OF TABLE
+    // GET LAST QUEUE OF TABLE — เฉพาะ session ปัจจุบัน (ไม่นับ paid)
     const lastQueue = await db.query(
       `
       SELECT MAX(queue_number) as last_queue
       FROM orders
-      WHERE table_number = $1
+      WHERE table_number = $1 AND status != 'paid'
       `,
       [tableNumber]
     );
-    const queueNumber =
-      (lastQueue.rows[0].last_queue || 0) + 1;
+    const queueNumber = (lastQueue.rows[0].last_queue || 0) + 1;
 
     const orderResult = await db.query(
       "INSERT INTO orders (total_price, table_number, queue_number) VALUES ($1, $2, $3) RETURNING id",
