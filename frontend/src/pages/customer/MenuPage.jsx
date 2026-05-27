@@ -8,6 +8,7 @@ import axios from "axios";
 
 import API_URL from "../../api/api";
 import { useSearchParams } from "react-router-dom";
+import { io } from "socket.io-client";
 
 export default function MenuPage() {
 
@@ -22,6 +23,19 @@ export default function MenuPage() {
   useEffect(() => {
     fetchMenus();
     fetchOrders();
+  }, [tableNumber]);
+
+  useEffect(() => {
+    const socket = io(API_URL);
+
+    socket.on("tableCheckedOut", ({ tableNumber: checkedTable }) => {
+      if (String(checkedTable) === String(tableNumber)) {
+        setOrders([]);        // reset ทันที
+        setShowOrders(false); // ปิด modal
+      }
+    });
+
+    return () => socket.disconnect();
   }, [tableNumber]);
 
   const fetchMenus = async () => {

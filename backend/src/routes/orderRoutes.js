@@ -69,15 +69,30 @@ router.get("/", async (req, res) => {
   }
 });
 
+// CHECKOUT TABLE (mark all orders as paid)
+router.put("/checkout/:tableNumber", async (req, res) => {
+  try {
+    await db.query(
+      `UPDATE orders SET status = 'paid' WHERE table_number = $1 AND status != 'paid'`,
+      [req.params.tableNumber]
+    );
+
+    io.emit("tableCheckedOut", { tableNumber: req.params.tableNumber });
+    res.json({ message: "Checkout Success" });
+  } catch (err) {
+    console.log(err);
+    res.status(500).json({ message: "Checkout Failed" });
+  }
+});
+
 // GET ORDERS BY TABLE
 router.get("/:tableNumber", async (req, res) => {
   try {
-
     const orders = await db.query(
       `
       SELECT *
       FROM orders
-      WHERE table_number = $1
+      WHERE table_number = $1 AND status != 'paid'
       ORDER BY created_at DESC
       `,
       [req.params.tableNumber]
