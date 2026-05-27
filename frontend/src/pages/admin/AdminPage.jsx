@@ -5,7 +5,7 @@ import API_URL from "../../api/api";
 
 export default function AdminPage() {
   const navigate = useNavigate();
-  const [activeTab, setActiveTab] = useState("menu"); // "menu" | "checkout"
+  const [activeTab, setActiveTab] = useState("menu");
   const [menus, setMenus] = useState([]);
   const [orders, setOrders] = useState([]);
   const [formData, setFormData] = useState({
@@ -15,6 +15,7 @@ export default function AdminPage() {
     image: null,
   });
   const [editingId, setEditingId] = useState(null);
+  const [selectedTable, setSelectedTable] = useState(null);
 
   useEffect(() => {
     fetchMenus();
@@ -39,7 +40,6 @@ export default function AdminPage() {
     }
   };
 
-  // จัดกลุ่ม orders ตามโต๊ะ (เฉพาะที่ยังไม่ paid)
   const activeOrders = orders.filter((o) => o.status !== "paid");
   const groupedByTable = activeOrders.reduce((acc, order) => {
     const table = order.table_number;
@@ -146,7 +146,6 @@ export default function AdminPage() {
           }`}
         >
           💳 เช็คบิล
-          {/* Badge แสดงจำนวนโต๊ะที่มี orders */}
           {Object.keys(groupedByTable).length > 0 && (
             <span className="ml-2 bg-red-500 text-white text-xs px-2 py-0.5 rounded-full">
               {Object.keys(groupedByTable).length}
@@ -246,17 +245,106 @@ export default function AdminPage() {
                         {tableOrders.length} ออเดอร์ · รวม ฿{total.toFixed(2)}
                       </p>
                     </div>
-                    <button
-                      onClick={() => handleCheckout(table)}
-                      className="bg-green-500 text-white px-5 py-2 rounded-xl hover:bg-green-600 transition"
-                    >
-                      💳 เช็คบิล
-                    </button>
+                    <div className="flex gap-2">
+                      <button
+                        onClick={() => setSelectedTable({ table, tableOrders, total })}
+                        className="bg-gray-100 text-gray-700 px-5 py-2 rounded-xl hover:bg-gray-200 transition"
+                      >
+                        🧾 ดูรายการ
+                      </button>
+                      <button
+                        onClick={() => handleCheckout(table)}
+                        className="bg-green-500 text-white px-5 py-2 rounded-xl hover:bg-green-600 transition"
+                      >
+                        💳 เช็คบิล
+                      </button>
+                    </div>
                   </div>
                 );
               })}
             </div>
           )}
+        </div>
+      )}
+
+      {/* MODAL ดูรายการโต๊ะ */}
+      {selectedTable && (
+        <div className="fixed inset-0 bg-black/50 flex justify-center items-center z-50 p-4">
+          <div className="bg-white w-full max-w-lg rounded-3xl shadow-2xl p-6 relative max-h-[80vh] overflow-y-auto">
+
+            {/* CLOSE */}
+            <button
+              onClick={() => setSelectedTable(null)}
+              className="absolute top-4 right-4 text-2xl font-bold text-gray-400 hover:text-black"
+            >
+              ✕
+            </button>
+
+            {/* TITLE */}
+            <h2 className="text-2xl font-bold mb-1">โต๊ะ {selectedTable.table}</h2>
+            <p className="text-gray-400 text-sm mb-5">
+              {selectedTable.tableOrders.length} ออเดอร์
+            </p>
+
+            {/* ORDER LIST */}
+            <div className="space-y-4">
+              {selectedTable.tableOrders.map((order) => (
+                <div key={order.id} className="border rounded-2xl p-4">
+
+                  {/* ORDER HEADER */}
+                  <div className="flex justify-between items-center mb-3">
+                    <div>
+                      <p className="font-bold">Order #{order.queue_number}</p>
+                      <p className="text-gray-400 text-xs">
+                        {new Date(order.created_at).toLocaleString()}
+                      </p>
+                    </div>
+                    <span className="bg-yellow-100 text-yellow-700 px-3 py-1 rounded-full text-sm">
+                      {order.status || "Pending"}
+                    </span>
+                  </div>
+
+                  {/* ITEMS */}
+                  <div className="space-y-1">
+                    {order.items?.map((item, index) => (
+                      <div key={index} className="flex justify-between text-sm">
+                        <p>
+                          {item.name}{" "}
+                          <span className="text-gray-400">฿{item.price ?? 0}</span>
+                        </p>
+                        <p className="text-gray-600">x{item.quantity}</p>
+                      </div>
+                    ))}
+                  </div>
+
+                  {/* ORDER TOTAL */}
+                  <div className="border-t mt-3 pt-3 flex justify-between font-bold text-sm">
+                    <p>Total</p>
+                    <p>฿{order.total_price}</p>
+                  </div>
+
+                </div>
+              ))}
+            </div>
+
+            {/* GRAND TOTAL */}
+            <div className="border-t mt-5 pt-4 flex justify-between text-xl font-bold">
+              <p>รวมทั้งหมด</p>
+              <p>฿{selectedTable.total.toFixed(2)}</p>
+            </div>
+
+            {/* CHECKOUT BUTTON */}
+            <button
+              onClick={() => {
+                handleCheckout(selectedTable.table);
+                setSelectedTable(null);
+              }}
+              className="mt-5 w-full bg-green-500 text-white py-3 rounded-2xl font-bold text-lg hover:bg-green-600 transition"
+            >
+              💳 เช็คบิลโต๊ะ {selectedTable.table}
+            </button>
+
+          </div>
         </div>
       )}
 
